@@ -20,7 +20,6 @@ function CalculComplexiteMdp($mdp):int{
     $point_chiffre = 0;
     $point_caracteres= 0;
 
-
 // On fait une boucle pour lire chaque lettre
     for($i = 0; $i < $longueur; $i++) 	{
 
@@ -46,10 +45,8 @@ function CalculComplexiteMdp($mdp):int{
         }
     }
 
-
 // Calcul du coefficient de la diversité des types de caractères...
     $etape2 = $point_min + $point_maj + $point_chiffre + $point_caracteres;
-    var_dump($etape2);
 // Multiplication du résultat par la longueur de la chaîne
     return round($longueur * log($etape2, 2));
 }

@@ -10,20 +10,13 @@ class Singleton_ConnexionPDO extends PDO
 
     private function __construct()
     {
-        $myFile = "paramBDD.txt";
-        $lines = file($myFile);//file in to an array
-        foreach($lines as $line)
-        {
-            $var = explode(' ', $line, 2);
-            if(!isset($var[1]))
-                $var[1] = "";
-            $arr[$var[0]] = trim($var[1]);
-        }
-
-        parent::__construct('mysql:host='.$arr["IPBDD"].';dbname='.$arr["BDD"].';charset=UTF8',
-            $arr["USERBDD"],
-            $arr["MDPBDD"],
-            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ));
+        parent::__construct('mysql:host=127.0.0.1;dbname=CS_2024_CAFE;charset=UTF8',
+            "root",
+            "",
+            array(
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            )
+        );
 
     }
 
