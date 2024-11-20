@@ -11,6 +11,26 @@ class Modele_Utilisateur
      * @return mixed : le tableau des étudiants ou null (something went wrong...)
      *
      */
+
+    static function Utilisateur_Modifier_RGPD($aAccepterRGPD, $dateAcceptationRGPD, $Ip_Utilisateur , $id_Utilisateur){
+        $connexionPDO = Singleton_ConnexionPDO::getInstance();
+
+        $requetePreparee = $connexionPDO->prepare(
+            'UPDATE `utilisateur`
+            SET `aAccepterRGPD`= :aAccepterRGPD,
+                `dateAcceptionRGPD`= :dateAcceptionRGPD,
+                `IP`=:IP
+WHERE idUtilisateur = :idUtilisateur'
+        );
+        $requetePreparee->bindParam('aAccepterRGPD', $aAccepterRGPD);
+        $requetePreparee->bindParam('dateAcceptionRGPD', $dateAcceptationRGPD);
+        $requetePreparee->bindParam('IP', $Ip_Utilisateur);
+        $requetePreparee->bindParam('idUtilisateur', $id_Utilisateur);
+        $reponse = $requetePreparee->execute(); //$reponse boolean sur l'état de la requête
+
+        return $reponse;
+
+    }
     static function Utilisateur_Select()
     {
         $connexionPDO = Singleton_ConnexionPDO::getInstance();
