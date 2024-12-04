@@ -10,9 +10,9 @@ $mail->SMTPAutoTLS = false; //Pas de certificat TLS
 $mail->setFrom('test@labruleriecomtoise.fr', 'admin');
 $mail->addAddress('client@labruleriecomtoise.fr', 'Mon client');
 if ($mail->addReplyTo('test@labruleriecomtoise.fr', 'admin')) {
-    $mail->Subject = 'Objet : Bonjour !';
+    $mail->Subject = 'Objet : Réinitialisation du mot de passe !';
     $mail->isHTML(false);
-    $mail->Body = "Corps du message pour mon client :)";
+    $mail->Body = passgen1(10);
 
     if (!$mail->send()) {
         $msg = 'Désolé, quelque chose a mal tourné. Veuillez réessayer plus tard.';
