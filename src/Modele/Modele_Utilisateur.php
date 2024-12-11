@@ -70,6 +70,7 @@ class Modele_Utilisateur
         return $utilisateur;
     }
 
+
     /**
      * @param $connexionPDO
      * @param $login
@@ -198,6 +199,22 @@ WHERE idUtilisateur = :paramidUtilisateur');
 SET motDePasse = :parammotDePasse ');
         $requetePreparee->bindParam('parammotDePasse', $motDePasse);
         $reponse = $requetePreparee->execute(); //$reponse boolean sur l'état de la requête
+        return $reponse;
+    }
+
+    static function Utilisateur_Modifier_motDePasseLogin($login, $motDePasse)
+
+    {
+        $connexionPDO = Singleton_ConnexionPDO::getInstance();
+
+        $requetePreparee = $connexionPDO->prepare(
+            'UPDATE `utilisateur` 
+SET motDePasse = :parammotDePasse
+WHERE login = :paramlogin');
+        $requetePreparee->bindParam('parammotDePasse', $motDePasse);
+        $requetePreparee->bindParam('paramlogin', $login);
+        $reponse = $requetePreparee->execute(); //$reponse boolean sur l'état de la requête
+
         return $reponse;
     }
 

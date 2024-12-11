@@ -1,9 +1,12 @@
 <?php
 
+use App\Modele\Modele_Jeton;
 use App\Modele\Modele_Entreprise;
 use App\Modele\Modele_Salarie;
 use App\Modele\Modele_Utilisateur;
+use App\Utilitaire\Singleton_ConnexionPDO;
 use App\Vue\Vue_Connexion_Formulaire_client;
+use App\Vue\Vue_Mail_ChoisirNouveauMdp;
 use App\Vue\Vue_Mail_Confirme;
 use App\Vue\Vue_Mail_ReinitMdp;
 use App\Vue\Vue_Menu_Administration;
@@ -11,17 +14,51 @@ use App\Vue\Vue_Structure_BasDePage;
 use App\Vue\Vue_Structure_Entete;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use function App\Fonctions\changerMDP;
+
 //Ce contrôleur gère le formulaire de connexion pour les visiteurs
 
 $Vue->setEntete(new Vue_Structure_Entete());
 
 switch ($action) {
     case "reinitmdpconfirm":
+    \App\Fonctions\envoyerMail();
+    header("../index.php");
 
-        //comme un qqc qui manque... je dis ça ! je dis rien !
+    break;
+    case "reinitmdpconfirmToken":
 
-        $Vue->addToCorps(new Vue_Mail_Confirme());
-
+        $email = trim($_POST['email']);
+        $_SESSION['login'] = $email;
+        //$Vue->addToCorps(new \App\Vue\Vue_AfficherMessage($email));
+        $utilisateur = Modele_Utilisateur::Utilisateur_Select_ParLogin($email);
+        if($utilisateur != null) {
+            $modeleJeton = new Modele_Jeton(Singleton_ConnexionPDO::getInstance());
+            $tokenValeur = $modeleJeton->genererValeurToken();
+            //$valeur->invaliderJeton($tokenValeur);
+            $idUtilisateur = $utilisateur["idUtilisateur"];
+            \App\Fonctions\envoyerMailToken($tokenValeur, $email);
+            $modeleJeton->insertJeton(0, $idUtilisateur);
+        }
+        else
+        {
+            $Vue->addToCorps(new Vue_Mail_ReinitMdp());
+        }
+        break;
+    case "token":
+        $_SESSION['token'] = $_GET["token"];
+        $Vue->addToCorps(new Vue_Mail_ChoisirNouveauMdp ($_GET["token"]));
+        break;
+    case "choixmdp";
+        $mdp1 = $_POST['mdp1'];
+        $mdp2 = $_POST['mdp2'];
+        if($mdp1 == $mdp2){
+            $login = $_SESSION["login"];
+            $message = Modele_Utilisateur::Utilisateur_Modifier_motDePasseLogin($login, $mdp1);
+            $Vue->addToCorps(new Vue_Connexion_Formulaire_client());
+        }else{
+            $Vue->addToCorps(new Vue_Mail_ChoisirNouveauMdp ($_SESSION['token']));
+        }
         break;
     case "reinitmdp":
 
@@ -36,7 +73,7 @@ switch ($action) {
             $utilisateur = Modele_Utilisateur::Utilisateur_Select_ParLogin($_REQUEST["compte"]);
 
             if ($utilisateur != null) {
-                //error_log("utilisateur : " . $utilisateur["idUtilisateur"]);
+                //Error_log("utilisateur : " . $utilisateur["idUtilisateur"]);
                 if ($utilisateur["desactiver"] == 0) {
                     if ($_REQUEST["password"] == $utilisateur["motDePasse"]) {
                         $_SESSION["idUtilisateur"] = $utilisateur["idUtilisateur"];

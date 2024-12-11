@@ -47,6 +47,8 @@ else
 
 switch ($typeConnexion) {
     case "visiteur" :
+
+
         include "Controleur/Controleur_visiteur.php";
         break;
     case "gestionnaireCatalogue":

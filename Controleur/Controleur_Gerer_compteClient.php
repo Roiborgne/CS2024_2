@@ -60,7 +60,7 @@ switch ($action) {
         $Vue->setMenu(new Vue_Menu_Entreprise_Client($quantiteMenu));
         break;
     default:
-        //Cas par défaut: affichage du menu des actions.
+        //Cas par défaut : affichage du menu des actions.
         $Vue->setEntete(new Vue_Structure_Entete());
         $quantiteMenu = Modele_Commande::Panier_Quantite($_SESSION["idEntreprise"]);
         $Vue->setMenu(new Vue_Menu_Entreprise_Client($quantiteMenu));

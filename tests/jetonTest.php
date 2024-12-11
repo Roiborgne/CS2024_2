@@ -4,7 +4,7 @@ use App\Modele\Modele_Jeton;
 
 require_once '../src/Modele/Modele_Jeton.php';
 
-$db = new PDO('mysql:host=localhost;dbname=cs_2024_cafe', 'root', '');
+$db = new PDO('mysql:host=localhost;dbname=cs_2024_cafe', 'root', ''); //dbname peut être différent
 
 $modeleJeton = new Modele_Jeton($db);
 

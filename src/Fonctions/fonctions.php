@@ -1,6 +1,13 @@
 <?php
 namespace App\Fonctions;
-    use function PHPUnit\Framework\throwException;
+use App\Modele\Modele_Jeton;
+use App\Modele\Modele_Utilisateur;
+use App\Vue\Vue_Mail_Confirme;
+use App\Vue\Vue_Mail_ReinitMdp;
+use PDO;
+use function PHPUnit\Framework\throwException;
+include "vendor/autoload.php";
+use PHPMailer\PHPMailer\PHPMailer;
 
     function Redirect_Self_URL():void{
         unset($_REQUEST);
@@ -58,4 +65,61 @@ function changerMDP($mdp) :string{
             $_SESSION['success'] = "Le mdp est suffisament sécurisé !";
             return $mdp;
         }
+}
+
+function envoyerMail()
+{
+    $mail = new PHPMailer;
+    $mail->isSMTP();
+    $mail->Host = '127.0.0.1';
+    $mail->Port = 1025; //Port non crypté
+    $mail->SMTPAuth = false; //Pas d’authentification
+    $mail->SMTPAutoTLS = false; //Pas de certificat TLS
+    $mail->setFrom('test@labruleriecomtoise.fr', 'admin');
+    $mail->addAddress('client@labruleriecomtoise.fr', 'Mon client');
+    if ($mail->addReplyTo('test@labruleriecomtoise.fr', 'admin')) {
+        $mail->Subject = 'Objet : Nvx mdp';
+        $mail->isHTML(false);
+        $mail->Body = "secret";//$this->token();
+
+        if (!$mail->send()) {
+            $msg = 'Désolé, quelque chose a mal tourné. Veuillez réessayer plus tard.';
+        } else {
+            $msg = 'Message envoyé ! Merci de nous avoir contactés.';
+        }
+    } else {
+        $msg = 'Il doit manquer qqc !';
+    }
+    echo $msg;
+}
+function envoyerMailToken($tokenValeur,  $email)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->Host = '127.0.0.1';
+        $mail->Port = 1025; //Port non crypté
+        $mail->SMTPAuth = false; //Pas d’authentification
+        $mail->SMTPAutoTLS = false; //Pas de certificat TLS
+
+        $mail->setFrom('test@labruleriecomtoise.fr', 'admin');
+        $mail->addAddress($email, 'Mon client');
+        if ($mail->addReplyTo('test@labruleriecomtoise.fr', 'admin')) {
+            $mail->Subject = 'Objet : Nvx mdp';
+            $mail->isHTML(true);
+
+            $mail->Body = "Veuillez cliquer sur le lien pour réinitialiser votre mdp : <a href='http://localhost:8000/index.php?action=token&token=".urlencode($tokenValeur)."'>Lien à cliquer </a>"; //$this->token();
+
+            if (!$mail->send()) {
+                $msg = 'Désolé, quelque chose a mal tourné. Veuillez réessayer plus tard.';
+            } else {
+                $msg = 'Message envoyé ! Merci de nous avoir contactés.';
+            }
+        } else {
+            $msg = 'Il doit manquer qqc !';
+        }
+        echo $msg;
+    }
 }
