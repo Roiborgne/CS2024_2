@@ -47,6 +47,7 @@ switch ($action) {
         break;
     case "token":
         $_SESSION['token'] = $_GET["token"];
+        $this->validerJeton($_SESSION['token']);
         $Vue->addToCorps(new Vue_Mail_ChoisirNouveauMdp ($_GET["token"]));
         break;
     case "choixmdp";
